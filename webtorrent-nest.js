@@ -25,7 +25,7 @@ http.createServer((req, res)=> {
   }
   // res.write(JSON.stringify({"res":'Hello World!'})); //write a response to the client
   // res.end(); //end the response
-}).listen(process.env.PORT || 8080) //the server object listens on port 8080
+}).listen(process.env.PORT || 7071) //the server object listens on port 8080
 .on('error',(err)=>{
   console.error('unhandled error', err?.message)
 })
