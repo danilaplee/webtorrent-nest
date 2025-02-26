@@ -7,8 +7,8 @@ RUN apt-get autoremove --purge -y
 RUN rm -rf /var/lib/apt/lists/*
 RUN npm i -g --unsafe webtorrent-hybrid
 RUN mkdir -p /webtorrent
+RUN mkdir -p /var/app
+COPY webtorrent-nest.js /var/app/webtorrent-nest.js
 
-
-EXPOSE 8000
-WORKDIR /webtorrent
-ENTRYPOINT ["/usr/local/bin/webtorrent-hybrid"]
+EXPOSE 8080
+ENTRYPOINT ["/var/app/webtorrent-nest.js"]
