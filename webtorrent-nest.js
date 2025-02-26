@@ -10,13 +10,7 @@ const streamFile = (req, res) => {
     return;
   }
   const child = spawn("webtorrent", ["download", magnetUri, "--keep-seeding"], 
-  //   (error, stdout, stderr) => {
-  //   if (error) {
-  //     throw error;
-  //   }
-  //   console.log(stdout);
-  // }
-    // {cwd:"/webtorrent"}
+    {cwd:"/webtorrent"}
   )
   child.stdout.on('data', (data) => {
     console.info('logs', data.toString())
