@@ -10,5 +10,5 @@ RUN mkdir -p /webtorrent
 RUN mkdir -p /var/app
 COPY webtorrent-nest.js /var/app/webtorrent-nest.js
 
-EXPOSE 8080
+EXPOSE 7071
 ENTRYPOINT ["/var/app/webtorrent-nest.js"]
