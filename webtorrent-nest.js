@@ -4,7 +4,7 @@ const { spawn } = require('node:child_process');
 const children = []
 const streamFile = (req, res) => {
   const magnetUri = decodeURIComponent(req.url.split('magnet=')?.[1]?.split('&')?.[0])
-  const cmd = `/usr/local/bin/webtorrent-hybrid download "${magnetUri}" --keep-seeding`
+  const cmd = `webtorrent download "${magnetUri}" --keep-seeding`
   children.push(spawn(cmd, {cwd:"/webtorrent"}))
   res.write(JSON.stringify({"res":"done"}))
   res.end()
