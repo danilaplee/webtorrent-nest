@@ -19,7 +19,6 @@ const streamFile = (req, res) => {
   res.write(JSON.stringify({"res":"done"}))
   res.end()
 }
-
 http.createServer((req, res)=> {
   // console.info('req', req.url)
   if(req.url.search("/stream") > -1) {
