@@ -23,13 +23,6 @@ const streamFile = async (magnetUri) => {
     }
     return;
   }
-  const pid = await redis.get(magnetUri)
-  if(pid && isRunning(pid)) {
-    if(process.env.ENABLE_LOGS === "true") {
-      console.info(`${pid} is already running for ${magnetUri}`)
-    }
-    return;
-  }
   const child = spawn(
     "webtorrent", 
     ["download", magnetUri, "--keep-seeding"], 
@@ -74,9 +67,7 @@ http.createServer((req, res)=> {
     res.write(JSON.stringify({"res":"not_found"}))
     res.end()
   }
-  // res.write(JSON.stringify({"res":'Hello World!'})); //write a response to the client
-  // res.end(); //end the response
-}).listen(process.env.PORT || 7071) //the server object listens on port 8080
+}).listen(process.env.PORT || 7071) 
 .on('error',(err)=>{
   console.error('unhandled error', err?.message)
 })
