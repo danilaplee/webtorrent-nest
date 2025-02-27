@@ -38,11 +38,12 @@ const streamFile = async (magnetUri, torrentFile) => {
   
   if(torrentFile)
     await redis.set(config.fileKey+magnetUri, await torrentFile)
-  console.in
+  console.info('before spawn')
   const child = spawn(
     "node", 
     [threadPath, "--magnet=", encodeURIComponent(magnetUri)]
   )
+  console.info('after spawn', child.pid)
   child.once("spawn", ()=>{
     child.addListener("exit", ()=>{
       delete children[magnetUri]
