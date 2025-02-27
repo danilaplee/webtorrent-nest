@@ -17,7 +17,7 @@ services:
       - ${REDIS_VOLUME_PATH}:/bitnami/redis/data
     ports:
       - "127.0.0.1:6379:6379"
-  pexels-api:   
+  webtorrent-nest:   
     depends_on:
       - redis 
     image: 'fiendofsound/webtorrent-nest:main'
