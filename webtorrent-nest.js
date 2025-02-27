@@ -1,12 +1,13 @@
 import { createServer } from 'http';
 import { spawn } from 'node:child_process';
 import Redis from 'ioredis';
-import { join } from 'path';
+import path from 'path';
 import {config} from './config.js'
 const { redis:_redis, fileKey, magnetKey } = config
+const __dirname = path.resolve();
 const redis = new Redis(_redis)
 const children = {}
-const threadPath = join(__dirname, "webtorrent-thread.js")
+const threadPath = path.join(__dirname, "webtorrent-thread.js")
 function getBody(request) {
   return new Promise((resolve, reject) => {
     const bodyParts = [];
