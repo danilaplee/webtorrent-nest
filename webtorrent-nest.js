@@ -34,7 +34,7 @@ const streamFile = async (magnetUri, torrentFile) => {
     }
     return;
   }
-  await redis.set(config.magnetKey+magnetUri, child.pid.toString())
+  await redis.set(config.magnetKey+magnetUri, "true")
   
   if(torrentFile)
     await redis.set(config.fileKey+magnetUri, await torrentFile)
