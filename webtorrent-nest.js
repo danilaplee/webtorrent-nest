@@ -1,10 +1,10 @@
 const http = require('http');
 const { spawn } = require('node:child_process');
 const Redis = require('ioredis')
-const config = require('config')
+const config = require('./config')
 const redis = new Redis(config.redis)
 const children = {}
-
+const threadPath = path.join(__dirname, "webtorrent-thread.js")
 function getBody(request) {
   return new Promise((resolve, reject) => {
     const bodyParts = [];
@@ -40,7 +40,7 @@ const streamFile = async (magnetUri, torrentFile) => {
 
   const child = spawn(
     "node", 
-    [path.join(__dirname, "webtorrent-thread.js"), "magnet=", encodeURIComponent(magnetUri)]
+    [threadPath, "--magnet=", encodeURIComponent(magnetUri)]
   )
   children[magnetUri] = child
   child.addListener("exit", ()=>{
