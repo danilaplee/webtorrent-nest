@@ -22,7 +22,7 @@ function getBody(request) {
     })
 
     request.on('end', () => {
-      const body = Buffer.concat(bodyParts).toString()
+      const body = Buffer.concat(bodyParts)
       resolve(body);
     });
   });

@@ -9,7 +9,7 @@ const runSeed = async () => {
   const magnetUri = decodeURIComponent(process.argv.join('').split('magnet=')[1])
   let torrentFile = undefined
   try {
-    torrentFile = JSON.parse(await redis.get(fileKey + magnetUri))
+    torrentFile = Uint8Array.from(Object.values(JSON.parse(await redis.get(fileKey + magnetUri))))
   } catch (err) {
 
   }
