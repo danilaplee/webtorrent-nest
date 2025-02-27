@@ -44,6 +44,9 @@ const streamFile = async (magnetUri, torrentFile) => {
     [threadPath, "--magnet=", encodeURIComponent(magnetUri)]
   )
   console.info('after spawn', child.pid)
+  child.stderr.on('data', (data)=>{
+    console.error('error', data.toString())
+  })
   child.once("spawn", ()=>{
     child.addListener("exit", ()=>{
       delete children[magnetUri]
