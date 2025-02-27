@@ -18,10 +18,12 @@ const isRunning = (pid) => {
 const streamFile = async (magnetUri) => {
  
   if(children[magnetUri]) {
+    console.info(`child is already running for ${magnetUri}`)
     return;
   }
   const pid = await redis.get(magnetUri)
   if(pid && isRunning(pid)) {
+    console.info(`${pid} is already running for ${magnetUri}`)
     return;
   }
   const child = spawn(
