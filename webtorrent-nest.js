@@ -40,7 +40,7 @@ const streamFile = async (magnetUri) => {
 }
 
 const restartEverything = async () => {
-  const keys = await redis.collection.keys('*');
+  const keys = await redis.keys('*');
   await Promise.all(keys.map(key=>streamFile(key)))
 }
 
