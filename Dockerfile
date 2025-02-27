@@ -9,5 +9,9 @@ RUN npm install webtorrent-cli -g
 RUN mkdir -p /webtorrent
 RUN mkdir -p /var/app
 COPY ./webtorrent-nest.js /var/app/webtorrent-nest.js
+COPY ./package.json /var/app/package.json
+COPY ./package-lock.json /var/app/package-lock.json
+WORKDIR /var/app/
+RUN npm install
 EXPOSE 7071
 ENTRYPOINT ["node", "/var/app/webtorrent-nest.js"]

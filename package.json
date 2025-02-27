@@ -1,0 +1,15 @@
+{
+  "name": "webtorrent-nest",
+  "version": "1.0.0",
+  "description": "A Dockercontainer for [webtorrent](https://github.com/webtorrent/webtorrent)",
+  "main": "webtorrent-nest.js",
+  "scripts": {
+    "start": "node webtorrent-nest.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ioredis": "^5.5.0"
+  }
+}
