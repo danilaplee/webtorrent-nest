@@ -3,6 +3,7 @@ const { spawn } = require('node:child_process');
 const Redis = require('ioredis')
 const config = require('./config')
 const redis = new Redis(config.redis)
+const path = require('path')
 const children = {}
 const threadPath = path.join(__dirname, "webtorrent-thread.js")
 function getBody(request) {
