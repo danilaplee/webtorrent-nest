@@ -34,16 +34,15 @@ const streamFile = async (magnetUri, torrentFile) => {
     }
     return;
   }
-  redis.set(config.magnetKey+magnetUri, child.pid.toString())
+  await redis.set(config.magnetKey+magnetUri, child.pid.toString())
   
   if(torrentFile)
-    redis.set(config.fileKey+magnetUri, await torrentFile)
-
+    await redis.set(config.fileKey+magnetUri, await torrentFile)
+  console.in
   const child = spawn(
     "node", 
     [threadPath, "--magnet=", encodeURIComponent(magnetUri)]
   )
-  children[magnetUri] = child
   child.once("spawn", ()=>{
     child.addListener("exit", ()=>{
       delete children[magnetUri]
@@ -55,6 +54,7 @@ const streamFile = async (magnetUri, torrentFile) => {
       });
     }
   })
+  children[magnetUri] = child
 }
 
 
