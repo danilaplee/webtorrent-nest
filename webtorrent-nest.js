@@ -20,7 +20,7 @@ function getBody(request) {
     })
     
     request.on('end', () => {
-      const body = Buffer.concat(bodyParts)
+      const body = Buffer.concat(bodyParts).toString()
       resolve(body);
     });
   });
