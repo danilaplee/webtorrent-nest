@@ -1,11 +1,14 @@
-const http = require('http');
-const { spawn } = require('node:child_process');
-const Redis = require('ioredis')
-const config = require('./config')
-const redis = new Redis(config.redis)
-const path = require('path')
+import { createServer } from 'http';
+import { spawn } from 'node:child_process';
+import Redis from 'ioredis';
+import { join } from 'path';
+
+import { redis as _redis, magnetKey, fileKey } from './config';
+
+const redis = new Redis(_redis)
 const children = {}
-const threadPath = path.join(__dirname, "webtorrent-thread.js")
+const threadPath = join(__dirname, "webtorrent-thread.js")
+
 function getBody(request) {
   return new Promise((resolve, reject) => {
     const bodyParts = [];
@@ -34,10 +37,10 @@ const streamFile = async (magnetUri, torrentFile) => {
     }
     return;
   }
-  await redis.set(config.magnetKey+magnetUri, "true")
+  await redis.set(magnetKey+magnetUri, "true")
   
   if(torrentFile)
-    await redis.set(config.fileKey+magnetUri, await torrentFile)
+    await redis.set(fileKey+magnetUri, await torrentFile)
   console.info('before spawn')
   const child = spawn(
     "node", 
@@ -62,7 +65,7 @@ const streamFile = async (magnetUri, torrentFile) => {
 }
 
 
-http.createServer((req, res)=> {
+createServer((req, res)=> {
   if(req.url.search("/stream") > -1) {
     try {
       const magnetUri = decodeURIComponent(req.url.split('magnet=')?.[1]?.split('&')?.[0])
@@ -95,7 +98,7 @@ http.createServer((req, res)=> {
 const restartEverything = async () => {
   try {
 
-    const keys = await redis.keys(config.magnetKey+'*');
+    const keys = await redis.keys(magnetKey+'*');
     console.info('total amount of keys', keys.length)
     await Promise.all(keys.map(key=>streamFile(key)))
 

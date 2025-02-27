@@ -1,6 +1,7 @@
 import WebTorrent from 'webtorrent'
 import Redis from 'ioredis'
-import { redis as _redis, fileKey } from './config'
+const config = require('./config')
+const {redis:_redis,fileKey} = config.redis
 
 const runSeed = async () => {
   const client = new WebTorrent()
@@ -9,7 +10,7 @@ const runSeed = async () => {
   console.info('starting process with magnet uri', magnetUri)
   let torrentFile = undefined
   try {
-  torrentFile = JSON.parse(await redis.get(fileKey+magnetUri))
+    torrentFile = JSON.parse(await redis.get(fileKey+magnetUri))
   } catch(err) {
 
   }
