@@ -34,7 +34,7 @@ const streamFile = async (magnetUri) => {
     delete children[magnetUri]
     streamFile(magnetUri)
   })
-  if(process.env.ENABLE_LOGS) {
+  if(process.env.ENABLE_LOGS === "true") {
     child.stdout.on('data', (data) => {
         console.info('logs', data.toString())
     });
