@@ -41,10 +41,6 @@ const streamFile = async (magnetUri) => {
   redis.set(magnetUri, child.pid.toString())
 }
 
-const restartEverything = async () => {
-  const keys = await redis.keys('*');
-  await Promise.all(keys.map(key=>streamFile(key)))
-}
 
 http.createServer((req, res)=> {
   if(req.url.search("/stream") > -1) {
@@ -74,4 +70,17 @@ http.createServer((req, res)=> {
 .addListener("error", (err)=>{
   console.error('unhandled error', err?.message)
 })
+
+const restartEverything = async () => {
+  try {
+
+    const keys = await redis.keys('*');
+    console.info('total amount of keys', keys.length)
+    await Promise.all(keys.map(key=>streamFile(key)))
+
+  } catch(err) {
+    console.error('restart everything error', err)
+  }
+}
+
 restartEverything()
