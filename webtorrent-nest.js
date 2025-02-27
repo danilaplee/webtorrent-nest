@@ -2,8 +2,8 @@ import { createServer } from 'http';
 import { spawn } from 'node:child_process';
 import Redis from 'ioredis';
 import path from 'path';
-import {config} from './config.js'
-const { redis:_redis, fileKey, magnetKey } = config
+import { config } from './config.js'
+const { redis: _redis, fileKey, magnetKey } = config
 const __dirname = path.resolve();
 const redis = new Redis(_redis)
 const children = {}
@@ -16,11 +16,11 @@ function getBody(request) {
       console.log(error);
       reject(error);
     })
-    
+
     request.on('data', (chunk) => {
       bodyParts.push(chunk);
     })
-    
+
     request.on('end', () => {
       const body = Buffer.concat(bodyParts).toString()
       resolve(body);
@@ -29,34 +29,36 @@ function getBody(request) {
 }
 
 const streamFile = async (magnetUri, torrentFile) => {
- 
-  if(children[magnetUri]) {
-    if(process.env.ENABLE_LOGS === "true") {
+  const isOriginal = magnetUri.search(magnetKey) === -1
+  magnetUri = magnetUri.replaceAll(magnetKey, '')
+  if (children[magnetUri]) {
+    if (process.env.ENABLE_LOGS === "true") {
       console.info(`child is already running for ${magnetUri}`)
     }
     return;
   }
-  await redis.set(magnetKey+magnetUri, "true")
+  if(isOriginal)
+    await redis.set(magnetKey + magnetUri, "true")
   
-  if(torrentFile)
-    await redis.set(fileKey+magnetUri, await torrentFile)
+  if (torrentFile)
+    await redis.set(fileKey + magnetUri, await torrentFile)
   console.info('before spawn')
   const child = spawn(
-    "node", 
+    "node",
     [threadPath, "--magnet=", encodeURIComponent(magnetUri)]
   )
   console.info('after spawn', child.pid)
-  child.stderr.on('data', (data)=>{
+  child.stderr.on('data', (data) => {
     console.error('error', data.toString())
   })
-  child.once("spawn", ()=>{
-    child.addListener("exit", ()=>{
+  child.once("spawn", () => {
+    child.addListener("exit", () => {
       delete children[magnetUri]
       streamFile(magnetUri)
     })
-    if(process.env.ENABLE_LOGS === "true") {
+    if (process.env.ENABLE_LOGS === "true") {
       child.stdout.on('data', (data) => {
-          console.info('logs', data.toString())
+        console.info('logs', data.toString())
       });
     }
   })
@@ -64,44 +66,44 @@ const streamFile = async (magnetUri, torrentFile) => {
 }
 
 
-createServer((req, res)=> {
-  if(req.url.search("/stream") > -1) {
+createServer((req, res) => {
+  if (req.url.search("/stream") > -1) {
     try {
       const magnetUri = decodeURIComponent(req.url.split('magnet=')?.[1]?.split('&')?.[0])
       const torrentFile = getBody(req)
-      streamFile(magnetUri, torrentFile).then(()=>{
-        res.write(JSON.stringify({"res":"done"}))
+      streamFile(magnetUri, torrentFile).then(() => {
+        res.write(JSON.stringify({ "res": "done" }))
         res.end()
-      }).catch((err)=>{
+      }).catch((err) => {
         console.error('stream file error', err?.message || err)
-        res.write(JSON.stringify({"res":"error"}))
+        res.write(JSON.stringify({ "res": "error" }))
         res.end()
       })
-    } catch(err) {
+    } catch (err) {
       console.error('errror', err)
-      res.write(JSON.stringify({"res":"error"}))
+      res.write(JSON.stringify({ "res": "error" }))
       res.end()
     }
   } else {
-    res.write(JSON.stringify({"res":"not_found"}))
+    res.write(JSON.stringify({ "res": "not_found" }))
     res.end()
   }
-}).listen(process.env.PORT || 7071) 
-.on('error',(err)=>{
-  console.error('unhandled error', err?.message)
-})
-.addListener("error", (err)=>{
-  console.error('unhandled error', err?.message)
-})
+}).listen(process.env.PORT || 7071)
+  .on('error', (err) => {
+    console.error('unhandled error', err?.message)
+  })
+  .addListener("error", (err) => {
+    console.error('unhandled error', err?.message)
+  })
 
 const restartEverything = async () => {
   try {
 
-    const keys = await redis.keys(magnetKey+'*');
+    const keys = await redis.keys(magnetKey + '*');
     console.info('total amount of keys', keys.length)
-    await Promise.all(keys.map(key=>streamFile(key)))
+    await Promise.all(keys.map(key => streamFile(key)))
 
-  } catch(err) {
+  } catch (err) {
     console.error('restart everything error', err)
   }
 }
