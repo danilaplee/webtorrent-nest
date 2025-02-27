@@ -21,7 +21,7 @@ const streamFile = async (magnetUri) => {
     return;
   }
   const pid = await redis.get(magnetUri)
-  if(cache && isRunning(pid)) {
+  if(pid && isRunning(pid)) {
     return;
   }
   const child = spawn(
