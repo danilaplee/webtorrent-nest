@@ -34,7 +34,8 @@ const streamFile = async (magnetUri) => {
     delete children[magnetUri]
   })
   child.stdout.on('data', (data) => {
-    console.info('logs', data.toString())
+    if(process.env.ENABLE_LOGS)
+      console.info('logs', data.toString())
   });
   redis.set(magnetUri, child.pid.toString())
 }

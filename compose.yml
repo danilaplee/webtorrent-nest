@@ -26,6 +26,7 @@ services:
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - ENABLE_LOGS=${ENABLE_LOGS}
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - PORT=7071
     ports:
