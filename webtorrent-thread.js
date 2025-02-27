@@ -8,7 +8,7 @@ const Redis = require('ioredis')
 const redis = new Redis(config.redis)
 
 const runSeed = async () => {
-  const torrentFile = await redis.get(fileKey+magnetUri)
+  const torrentFile = await redis.get(config.fileKey+magnetUri)
   client.add(
     torrentFile || magnetUri, 
     {path:"/webtorrent/", skipVerify:false}, 
