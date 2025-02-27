@@ -51,7 +51,8 @@ http.createServer((req, res)=> {
       streamFile(magnetUri).then(()=>{
         res.write(JSON.stringify({"res":"done"}))
         res.end()
-      }).catch(()=>{
+      }).catch((err)=>{
+        console.error('stream file error', err?.message || err)
         res.write(JSON.stringify({"res":"error"}))
         res.end()
       })
