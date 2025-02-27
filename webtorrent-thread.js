@@ -1,6 +1,6 @@
 import WebTorrent from 'webtorrent'
 import Redis from 'ioredis'
-import { redis as _redis, fileKey } from './config'
+import { redis as _redis, fileKey } from './config.js'
 
 const runSeed = async () => {
   const client = new WebTorrent()

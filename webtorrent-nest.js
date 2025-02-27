@@ -2,7 +2,7 @@ import { createServer } from 'http';
 import { spawn } from 'node:child_process';
 import Redis from 'ioredis';
 import { join } from 'path';
-import { redis as _redis, magnetKey, fileKey } from './config';
+import { redis as _redis, magnetKey, fileKey } from './config.js';
 const redis = new Redis(_redis)
 const children = {}
 const threadPath = join(__dirname, "webtorrent-thread.js")
