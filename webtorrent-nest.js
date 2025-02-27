@@ -32,11 +32,13 @@ const streamFile = async (magnetUri) => {
   children[magnetUri] = child
   child.addListener("exit", ()=>{
     delete children[magnetUri]
+    streamFile(magnetUri)
   })
-  child.stdout.on('data', (data) => {
-    if(process.env.ENABLE_LOGS)
-      console.info('logs', data.toString())
-  });
+  if(process.env.ENABLE_LOGS) {
+    child.stdout.on('data', (data) => {
+        console.info('logs', data.toString())
+    });
+  }
   redis.set(magnetUri, child.pid.toString())
 }
 
