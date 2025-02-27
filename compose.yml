@@ -17,7 +17,9 @@ services:
       - ${REDIS_VOLUME_PATH}:/bitnami/redis/data
     ports:
       - "127.0.0.1:6379:6379"
-  webtorrent-nest:   
+  webtorrent-nest:
+    volumes:
+      - ${WEBTORRENT_VOLUME_PATH}:/webtorrent   
     depends_on:
       - redis 
     image: 'fiendofsound/webtorrent-nest:main'
