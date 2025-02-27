@@ -13,7 +13,7 @@ const runSeed = async () => {
   } catch (err) {
 
   }
-  console.info('starting process with magnet uri', magnetUri, torrentFile)
+  console.info('starting process with magnet uri', magnetUri)
   client.add(
     torrentFile || magnetUri,
     { path: "/webtorrent/", skipVerify: false },
