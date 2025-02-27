@@ -44,15 +44,17 @@ const streamFile = async (magnetUri, torrentFile) => {
     [threadPath, "--magnet=", encodeURIComponent(magnetUri)]
   )
   children[magnetUri] = child
-  child.addListener("exit", ()=>{
-    delete children[magnetUri]
-    streamFile(magnetUri)
+  child.once("spawn", ()=>{
+    child.addListener("exit", ()=>{
+      delete children[magnetUri]
+      streamFile(magnetUri)
+    })
+    if(process.env.ENABLE_LOGS === "true") {
+      child.stdout.on('data', (data) => {
+          console.info('logs', data.toString())
+      });
+    }
   })
-  if(process.env.ENABLE_LOGS === "true") {
-    child.stdout.on('data', (data) => {
-        console.info('logs', data.toString())
-    });
-  }
 }
 
 
