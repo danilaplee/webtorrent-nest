@@ -1,4 +1,4 @@
-module.exports = {
+export const config = {
   fileKey:"torrentFile_",
   magnetKey:"magnetKey_",
   redis:{
@@ -8,3 +8,4 @@ module.exports = {
   },
   announce:["https://media.starpy.me", "wss://media.starpy.me"]
 }
+export default config
