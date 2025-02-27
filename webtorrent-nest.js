@@ -1,21 +1,30 @@
 const http = require('http');
 const { spawn } = require('node:child_process');
 const Redis = require('ioredis')
-const redis = new Redis({
-  port:6379, 
-  host:process.env.REDIS_HOST || "127.0.0.1",
-  password:process.env.REDIS_PASSWORD
-})
+const redis = new Redis(config.redis)
 const children = {}
-const isRunning = (pid) => {
-  try {
-    return process.kill(parseInt(pid, 10),0)
-  }
-  catch (e) {
-    return e.code === 'EPERM'
-  }
+
+function getBody(request) {
+  return new Promise((resolve, reject) => {
+    const bodyParts = [];
+
+    request.on('error', (error) => {
+      console.log(error);
+      reject(error);
+    })
+    
+    request.on('data', (chunk) => {
+      bodyParts.push(chunk);
+    })
+    
+    request.on('end', () => {
+      const body = Buffer.concat(bodyParts)
+      resolve(body);
+    });
+  });
 }
-const streamFile = async (magnetUri) => {
+
+const streamFile = async (magnetUri, torrentFile) => {
  
   if(children[magnetUri]) {
     if(process.env.ENABLE_LOGS === "true") {
@@ -23,10 +32,14 @@ const streamFile = async (magnetUri) => {
     }
     return;
   }
+  redis.set(config.magnetKey+magnetUri, child.pid.toString())
+  
+  if(torrentFile)
+    redis.set(config.fileKey+magnetUri, await torrentFile)
+
   const child = spawn(
-    "webtorrent", 
-    ["download", magnetUri, "--keep-seeding"], 
-    {cwd:"/webtorrent"}
+    "node", 
+    [path.join(__dirname, "webtorrent-thread.js"), "magnet=", encodeURIComponent(magnetUri)]
   )
   children[magnetUri] = child
   child.addListener("exit", ()=>{
@@ -38,7 +51,6 @@ const streamFile = async (magnetUri) => {
         console.info('logs', data.toString())
     });
   }
-  redis.set(magnetUri, child.pid.toString())
 }
 
 
@@ -46,7 +58,8 @@ http.createServer((req, res)=> {
   if(req.url.search("/stream") > -1) {
     try {
       const magnetUri = decodeURIComponent(req.url.split('magnet=')?.[1]?.split('&')?.[0])
-      streamFile(magnetUri).then(()=>{
+      const torrentFile = getBody(req)
+      streamFile(magnetUri, torrentFile).then(()=>{
         res.write(JSON.stringify({"res":"done"}))
         res.end()
       }).catch((err)=>{
@@ -74,7 +87,7 @@ http.createServer((req, res)=> {
 const restartEverything = async () => {
   try {
 
-    const keys = await redis.keys('*');
+    const keys = await redis.keys(config.magnetKey+'*');
     console.info('total amount of keys', keys.length)
     await Promise.all(keys.map(key=>streamFile(key)))
 
