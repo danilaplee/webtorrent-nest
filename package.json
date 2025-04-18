@@ -1,6 +1,6 @@
 {
   "name": "webtorrent-nest",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A Dockercontainer for [webtorrent](https://github.com/webtorrent/webtorrent)",
   "main": "webtorrent-nest.js",
   "scripts": {
