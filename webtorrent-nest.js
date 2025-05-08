@@ -50,7 +50,7 @@ const streamFile = async (magnetUri, torrentFile) => {
   console.info('before spawn')
   const child = spawn(
     "node",
-    [threadPath, "--magnet=", encodeURIComponent(magnetUri)]
+    [threadPath, "--magnet=", magnetUri]
   )
   console.info('after spawn', child.pid)
   child.stderr.on('data', (data) => {
@@ -75,7 +75,7 @@ createServer((req, res) => {
   if (req.url.search("/stream") > -1) {
     try {
       const urlParams = new URL(req.url).searchParams
-      const magnetUri = decodeURIComponent(urlParams.get("magnet"))
+      const magnetUri = urlParams.get("magnet")
       const torrentFile = getBody(req)
       streamFile(magnetUri, torrentFile).then(() => {
         res.write(JSON.stringify({ "res": "done" }))
