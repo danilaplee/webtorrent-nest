@@ -74,7 +74,7 @@ const streamFile = async (magnetUri, torrentFile) => {
 createServer((req, res) => {
   if (req.url.search("/stream") > -1) {
     try {
-      const urlParams = new URL(req.url).searchParams
+      const urlParams = new URL("https://localhost:8080"+req.url).searchParams
       const magnetUri = urlParams.get("magnet")
       const torrentFile = getBody(req)
       streamFile(magnetUri, torrentFile).then(() => {
