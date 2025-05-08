@@ -1,4 +1,4 @@
-FROM node:22-alpine
+FROM node:slim
 
 RUN apt-get update
 RUN mkdir -p /webtorrent
