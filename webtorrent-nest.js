@@ -29,7 +29,14 @@ function getBody(request) {
 }
 
 const streamFile = async (magnetUri, torrentFile) => {
+  if(magnetUri === 'undefined') {
+    return;
+  }
   const isOriginal = magnetUri.search(magnetKey) === -1
+
+  if(isOriginal)
+    await redis.set(magnetKey + magnetUri, "true")
+  
   magnetUri = magnetUri.replaceAll(magnetKey, '')
   if (children[magnetUri]) {
     if (process.env.ENABLE_LOGS === "true") {
@@ -37,8 +44,6 @@ const streamFile = async (magnetUri, torrentFile) => {
     }
     return;
   }
-  if(isOriginal)
-    await redis.set(magnetKey + magnetUri, "true")
   
   if (torrentFile)
     await redis.set(fileKey + magnetUri, await torrentFile)
@@ -101,7 +106,7 @@ const restartEverything = async () => {
 
     const keys = await redis.keys(magnetKey + '*');
     console.info('total amount of keys', keys.length)
-    await Promise.all(keys.map(key => key && key.search("magnet:") > -1 ? streamFile(key) : null))
+    await Promise.all(keys.map(key => streamFile(key) ))
 
   } catch (err) {
     console.error('restart everything error', err)
