@@ -25,6 +25,7 @@ const runSeed = async () => {
         const file = torrent.files[0]
         console.info('after rescan', file)
         if(file.downloaded === file.length) {
+          console.info('torrent previously downloaded')
           await redis.del(config.magnetKey+magnet)
           process.exit(0)
         }
