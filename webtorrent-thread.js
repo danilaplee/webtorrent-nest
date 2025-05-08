@@ -6,7 +6,8 @@ const { redis: _redis, fileKey } = config
 const runSeed = async () => {
   const client = new WebTorrent()
   const redis = new Redis(_redis)
-  const magnetUri = decodeURIComponent(process.argv.join('').split('magnet=')[1])
+  const magnet = process.argv.join('').split('magnet=')[1]
+  const magnetUri = decodeURIComponent(magnet)
   let torrentFile = undefined
   try {
     const cache = JSON.parse(await redis.get(fileKey + magnetUri))
