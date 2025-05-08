@@ -27,6 +27,7 @@ const runSeed = async () => {
         torrent.resume()
       })
       torrent.on("done", async ()=>{
+        console.info('torrent done')
         await redis.del(config.magnetKey+magnetUri)
       })
     })
