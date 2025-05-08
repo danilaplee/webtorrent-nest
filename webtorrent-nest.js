@@ -101,7 +101,7 @@ const restartEverything = async () => {
 
     const keys = await redis.keys(magnetKey + '*');
     console.info('total amount of keys', keys.length)
-    await Promise.all(keys.map(key => streamFile(key)))
+    await Promise.all(keys.map(key => key && key.search("magnet:") > -1 ? streamFile(key) : null))
 
   } catch (err) {
     console.error('restart everything error', err)
