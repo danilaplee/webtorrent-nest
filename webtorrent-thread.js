@@ -23,12 +23,14 @@ const runSeed = async () => {
       console.info('torrent created')
       torrent.rescanFiles(() => {
         console.info('after rescan')
-        torrent.files[0].select()
+        const file = torrent.files[0]
+        file.select()
         torrent.resume()
-      })
-      torrent.on("done", async ()=>{
-        console.info('torrent done')
-        await redis.del(config.magnetKey+magnetUri)
+        torrent.on("done", async ()=>{
+          console.info('torrent done')
+          await redis.del(config.magnetKey+magnetUri)
+          process.exit(0)
+        })
       })
     })
 }
