@@ -77,6 +77,7 @@ createServer((req, res) => {
       const urlParams = new URL("https://localhost:8080"+req.url).searchParams
       const magnetUri = urlParams.get("magnet")
       const torrentFile = getBody(req)
+      res.setHeader("Access-Control-Allow-Origin", req.headers.origin)
       streamFile(magnetUri, torrentFile).then(() => {
         res.write(JSON.stringify({ "res": "done" }))
         res.end()
