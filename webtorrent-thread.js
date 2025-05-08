@@ -22,8 +22,8 @@ const runSeed = async () => {
     (torrent) => {
       console.info('torrent created')
       torrent.rescanFiles(() => {
-        console.info('after rescan')
         const file = torrent.files[0]
+        console.info('after rescan', file)
         file.select()
         torrent.resume()
         torrent.on("done", async ()=>{
