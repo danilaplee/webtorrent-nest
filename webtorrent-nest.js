@@ -29,7 +29,7 @@ function getBody(request) {
 }
 
 const streamFile = async (magnetUri, torrentFile) => {
-  if(magnetUri === 'undefined') {
+  if(magnetUri === 'undefined' || magnetUri === undefined) {
     return;
   }
   const isOriginal = magnetUri.search(magnetKey) === -1
@@ -73,11 +73,11 @@ const streamFile = async (magnetUri, torrentFile) => {
 
 createServer((req, res) => {
   if (req.url.search("/stream") > -1) {
+    res.setHeader("Access-Control-Allow-Origin", req.headers.origin)
     try {
       const urlParams = new URL("https://localhost:8080"+req.url).searchParams
       const magnetUri = urlParams.get("magnet")
       const torrentFile = getBody(req)
-      res.setHeader("Access-Control-Allow-Origin", req.headers.origin)
       streamFile(magnetUri, torrentFile).then(() => {
         res.write(JSON.stringify({ "res": "done" }))
         res.end()
