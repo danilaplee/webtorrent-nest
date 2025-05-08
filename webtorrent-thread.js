@@ -21,14 +21,18 @@ const runSeed = async () => {
     { path: "/webtorrent/", skipVerify: false },
     (torrent) => {
       console.info('torrent created')
-      torrent.rescanFiles(() => {
+      torrent.rescanFiles(async () => {
         const file = torrent.files[0]
         console.info('after rescan', file)
+        if(file.downloaded) {
+          await redis.del(config.magnetKey+magnet)
+          process.exit(0)
+        }
         file.select()
         torrent.resume()
         torrent.on("done", async ()=>{
           console.info('torrent done')
-          await redis.del(config.magnetKey+magnetUri)
+          await redis.del(config.magnetKey+magnet)
           process.exit(0)
         })
       })
