@@ -36,7 +36,7 @@ const streamFile = async (magnetUri, torrentFile) => {
 
   if(isOriginal)
     await redis.set(magnetKey + magnetUri, "true")
-  
+
   magnetUri = magnetUri.replaceAll(magnetKey, '')
   if (children[magnetUri]) {
     if (process.env.ENABLE_LOGS === "true") {
@@ -74,7 +74,8 @@ const streamFile = async (magnetUri, torrentFile) => {
 createServer((req, res) => {
   if (req.url.search("/stream") > -1) {
     try {
-      const magnetUri = decodeURIComponent(req.url.split('magnet=')?.[1]?.split('&')?.[0])
+      const urlParams = new URL(req.url).searchParams
+      const magnetUri = decodeURIComponent(urlParams.get("magnet"))
       const torrentFile = getBody(req)
       streamFile(magnetUri, torrentFile).then(() => {
         res.write(JSON.stringify({ "res": "done" }))
