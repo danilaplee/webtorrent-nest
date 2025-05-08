@@ -24,7 +24,7 @@ const runSeed = async () => {
       torrent.rescanFiles(async () => {
         const file = torrent.files[0]
         console.info('after rescan', file)
-        if(file.downloaded) {
+        if(file.downloaded === file.length) {
           await redis.del(config.magnetKey+magnet)
           process.exit(0)
         }
