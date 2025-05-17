@@ -42,7 +42,7 @@ const streamFile = async (magnetUri, torrentFile) => {
     if (process.env.ENABLE_LOGS === "true") {
       console.info(`child is already running for ${magnetUri}`)
     }
-    return;
+    children[magnetUri].kill()
   }
   
   if (torrentFile)
