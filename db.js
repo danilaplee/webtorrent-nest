@@ -23,7 +23,7 @@ export const File = db.define("files", {
         type: DataTypes.JSONB
     },
     size: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER,
         allowNull: true
     },
     fileName: {
