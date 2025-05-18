@@ -24,7 +24,7 @@ export const File = db.define("files", {
     },
     size: {
         type: DataTypes.NUMBER,
-        allowNull:true
+        allowNull: true
     },
     createdAt: {
         allowNull: false,
