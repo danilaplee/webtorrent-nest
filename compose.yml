@@ -2,32 +2,16 @@ version: '3'
 
 networks:
   db-tier:
-    driver: bridge
+    external: true
 
 services:
-  redis:
-    image: 'bitnami/redis:latest'
-    environment:
-      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL,CONFIG
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - REDIS_PORT=6379
-    networks:
-      - db-tier
-    volumes:
-      - ${REDIS_VOLUME_PATH}:/bitnami/redis/data
-    ports:
-      - "127.0.0.1:6379:6379"
   webtorrent-nest:
     volumes:
       - ${WEBTORRENT_VOLUME_PATH}:/webtorrent   
-    depends_on:
-      - redis 
     image: 'fiendofsound/webtorrent-nest:main'
     environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      - PG_URL=${PG_URL}
       - ENABLE_LOGS=${ENABLE_LOGS}
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
       - PORT=7071
     ports:
       - "7071:7071"
