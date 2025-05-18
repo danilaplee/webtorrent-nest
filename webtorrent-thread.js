@@ -6,6 +6,7 @@ const runSeed = async () => {
   const client = new WebTorrent()
   client.on("error", (err)=>{
     console.error('client error', err)
+    process.exit(1)
   })
   const magnet = process.argv.join('').split('magnet=')[1]
   const magnetUri = decodeURIComponent(magnet)
@@ -16,7 +17,7 @@ const runSeed = async () => {
     console.info('find cache for magnet', cache)
     torrentFile = new File(
       [
-        Uint8Array.from(Object.values(cache.torrentFile.data))
+        Uint8Array.from(Object.values(cache.torrentFile))
           .buffer,
       ],
       "media.torrent",
@@ -40,6 +41,7 @@ const runSeed = async () => {
           cache.size = file.length
           cache.fileName = file.name
           await cache.save()
+          await cache.reload()
         }
         console.info('after rescan', file.downloaded, file.length, file.name)
         if(file.downloaded === file.length) {
