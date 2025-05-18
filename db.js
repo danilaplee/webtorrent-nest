@@ -6,7 +6,7 @@ export const db = new Sequelize(process.env.PG_URL)
 export const File = db.define("files", {
     id: {
         primaryKey: true,
-        type: DataTypes.UUID.V4,
+        type: DataTypes.UUID,
         defaultValue: Sequelize.literal('uuid_generate_v4()')
     },
     magnet: {
