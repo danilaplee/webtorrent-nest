@@ -4,6 +4,9 @@ import { Op } from 'sequelize'
 
 const runSeed = async () => {
   const client = new WebTorrent()
+  client.on("error", (err)=>{
+    console.error('client error', err)
+  })
   const magnet = process.argv.join('').split('magnet=')[1]
   const magnetUri = decodeURIComponent(magnet)
   let torrentFile = undefined
