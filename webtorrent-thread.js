@@ -20,7 +20,7 @@ const runSeed = async () => {
   await cache.save()
   await cache.reload()
   client.add(
-    cache.torrentFile || magnetUri,
+    Buffer.from(cache.torrentFile.data) || magnetUri,
     { path: "/webtorrent/", skipVerify: false },
     (torrent) => {
       console.info('torrent created')
