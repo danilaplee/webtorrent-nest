@@ -26,6 +26,10 @@ export const File = db.define("files", {
         type: DataTypes.NUMBER,
         allowNull: true
     },
+    fileName: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
     createdAt: {
         allowNull: false,
         type: DataTypes.DATE

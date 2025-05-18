@@ -25,6 +25,11 @@ const runSeed = async () => {
       console.info('torrent created')
       torrent.rescanFiles(async () => {
         const file = torrent.files[0]
+        if(!cache.size) {
+          cache.size = file.length
+          cache.fileName = file.name
+          await cache.save()
+        }
         console.info('after rescan', file.downloaded, file.length, file.name)
         if(file.downloaded === file.length) {
           console.info('torrent previously downloaded')
