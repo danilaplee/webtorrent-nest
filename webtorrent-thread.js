@@ -9,10 +9,10 @@ const runSeed = async () => {
   let torrentFile = undefined
   let cache;
   try {
-    cache = (await File.findOne({where:{magnet:{[Op.eq]:magnetUri}}})).torrentFile
-    torrentFile = Uint8Array.from(Object.values(cache))
+    cache = await File.findOne({where:{magnet:{[Op.eq]:magnetUri}}})
+    torrentFile = Uint8Array.from(Object.values(cache.torrentFile.data))
   } catch (err) {
-
+    throw err;
   }
   console.info('starting process with magnet uri', magnetUri)
   cache.status = "seeding"
