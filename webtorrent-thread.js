@@ -36,7 +36,7 @@ const runSeed = async () => {
           cache.status = "done"
           await cache.save()
           await cache.reload()
-          process.exit(0)
+          return process.exit(0)
         }
         file.select()
         torrent.resume()
@@ -44,9 +44,8 @@ const runSeed = async () => {
           console.info('torrent done')
           cache.status = "done"
           await cache.save()
-          await cache.save()
           await cache.reload()
-          process.exit(0)
+          return process.exit(0)
         })
       })
     })
