@@ -14,7 +14,13 @@ const runSeed = async () => {
   try {
     cache = await File.findOne({where:{magnet:{[Op.eq]:magnet}}})
     console.info('find cache for magnet', cache)
-    torrentFile = Buffer.from(cache.torrentFile.data)
+    torrentFile = new File(
+      [
+        Uint8Array.from(Object.values(cache.torrentFile.data))
+          .buffer,
+      ],
+      "media.torrent",
+    )
   } catch (err) {
     throw err;
   }
