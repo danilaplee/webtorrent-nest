@@ -10,7 +10,8 @@ const runSeed = async () => {
   let cache;
   try {
     cache = await File.findOne({where:{magnet:{[Op.eq]:magnet}}})
-    torrentFile = Uint8Array.from(Object.values(cache.torrentFile))
+    console.info('find cache for magnet', cache)
+    torrentFile = Uint8Array.from(cache.torrentFile.data)
   } catch (err) {
     throw err;
   }
