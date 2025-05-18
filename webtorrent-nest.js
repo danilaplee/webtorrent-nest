@@ -1,7 +1,7 @@
 import { createServer } from 'http';
 import { spawn } from 'node:child_process';
 import path from 'path';
-import {File} from './db.js'
+import { File } from './db.js'
 import { Op } from 'sequelize'
 const envInterval = parseInt(process.env.QUEUE_RUN_INTERVAL)
 const queueRunInterval = !isNaN(envInterval) ? envInterval : 10
@@ -28,11 +28,20 @@ function getBody(request) {
     });
   });
 }
+const addFile = async (magnetUri, torrentFile) => {
 
-const streamFile = async (magnetUri, torrentFile) => {
-  if(magnetUri === 'undefined' || magnetUri === undefined) {
+  if (magnetUri === 'undefined' || magnetUri === undefined) {
     return;
   }
+  if (torrentFile) {
+    const file = await File.create({ magnet: magnetUri, torrentFile: await torrentFile, status: "leech" })
+    return file;
+  }
+
+}
+
+const streamFile = async (magnetUri, torrentFile) => {
+
 
   if (children[magnetUri]) {
     if (process.env.ENABLE_LOGS === "true") {
@@ -40,9 +49,7 @@ const streamFile = async (magnetUri, torrentFile) => {
     }
     children[magnetUri].kill()
   }
-  
-  if (torrentFile)
-    await File.create({magnet:magnetUri, torrentFile: await torrentFile, status: "leech"})
+
 
   console.info('before spawn')
 
@@ -71,10 +78,10 @@ const streamFile = async (magnetUri, torrentFile) => {
 createServer((req, res) => {
   if (req.url.search("/stream") > -1) {
     try {
-      const urlParams = new URL("https://localhost:8080"+req.url).searchParams
+      const urlParams = new URL("https://localhost:8080" + req.url).searchParams
       const magnetUri = urlParams.get("magnet")
       const torrentFile = getBody(req)
-      streamFile(magnetUri, torrentFile).then(() => {
+      addFile(magnetUri, torrentFile).then(() => {
         res.setHeader("Access-Control-Allow-Origin", req.headers.origin)
         res.write(JSON.stringify({ "res": "done" }))
         return res.end()
@@ -104,10 +111,15 @@ createServer((req, res) => {
   })
 
 const runQueue = async () => {
-  const newFiles = await File.findAll({where:{status:{[Op.eq]:"leech"}}})
-  await Promise.all(newFiles.map(async (nfile)=>
-    streamFile(nfile.magnet, nfile.torrentFile)
-  ))
+  try {
+
+    const newFiles = await File.findAll({ where: { status: { [Op.eq]: "leech" } } })
+    await Promise.all(newFiles.map(async (nfile) =>
+      streamFile(nfile.magnet, nfile.torrentFile)
+    ))
+  } catch (err) {
+    console.error('err running queue',)
+  }
 }
 
 
