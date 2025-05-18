@@ -4,7 +4,7 @@ import path from 'path';
 import { File } from './db.js'
 import { Op } from 'sequelize'
 const envInterval = parseInt(process.env.QUEUE_RUN_INTERVAL)
-const queueRunInterval = !isNaN(envInterval) ? envInterval : 10
+const queueRunInterval = !isNaN(envInterval) ? envInterval : 10*1000
 const __dirname = path.resolve();
 const children = {}
 const threadPath = path.join(__dirname, "webtorrent-thread.js")
