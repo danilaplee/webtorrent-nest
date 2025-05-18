@@ -1,10 +1,10 @@
 import { createServer } from 'http';
 import { spawn } from 'node:child_process';
 import path from 'path';
-import { File } from './db.js'
+import { File, syncPromise } from './db.js'
 import { Op } from 'sequelize'
 const envInterval = parseInt(process.env.QUEUE_RUN_INTERVAL)
-const queueRunInterval = !isNaN(envInterval) ? envInterval : 10*1000
+const queueRunInterval = !isNaN(envInterval) ? envInterval : 10000
 const __dirname = path.resolve();
 const children = {}
 const threadPath = path.join(__dirname, "webtorrent-thread.js")
@@ -122,6 +122,7 @@ const runQueue = async () => {
   }
 }
 
-
-setInterval(runQueue, queueRunInterval)
+syncPromise.then(()=>{
+  setInterval(runQueue, queueRunInterval)
+})
 

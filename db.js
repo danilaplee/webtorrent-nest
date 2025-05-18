@@ -31,4 +31,4 @@ export const File = db.define("files", {
         type: DataTypes.DATE
     }
 })
-db.sync();
+export const syncPromise = db.sync();
