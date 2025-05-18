@@ -11,7 +11,7 @@ const runSeed = async () => {
   try {
     cache = await File.findOne({where:{magnet:{[Op.eq]:magnet}}})
     console.info('find cache for magnet', cache)
-    // torrentFile = Uint8Array.from(Object.values(cache.torrentFile))
+    torrentFile = Buffer.from(cache.torrentFile.data)
   } catch (err) {
     throw err;
   }
@@ -20,7 +20,7 @@ const runSeed = async () => {
   await cache.save()
   await cache.reload()
   client.add(
-    Buffer.from(cache.torrentFile.data) || magnetUri,
+    torrentFile || magnetUri,
     { path: "/webtorrent/", skipVerify: false },
     (torrent) => {
       console.info('torrent created')
