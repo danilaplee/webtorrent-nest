@@ -57,4 +57,6 @@ const runSeed = async () => {
 
 runSeed().then(() => {
 
+}).catch(err=>{
+  console.error('runSeed error', err)
 })
