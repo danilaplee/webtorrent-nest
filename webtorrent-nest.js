@@ -78,24 +78,24 @@ createServer((req, res) => {
       const magnetUri = urlParams.get("magnet")
       const torrentFile = getBody(req)
       streamFile(magnetUri, torrentFile).then(() => {
-        res.write(JSON.stringify({ "res": "done" }))
         res.setHeader("Access-Control-Allow-Origin", req.headers.origin)
-        res.end()
+        res.write(JSON.stringify({ "res": "done" }))
+        return res.end()
       }).catch((err) => {
         console.error('stream file error', err?.message || err)
-        res.write(JSON.stringify({ "res": "error" }))
         res.setHeader("Access-Control-Allow-Origin", req.headers.origin)
+        res.write(JSON.stringify({ "res": "error" }))
         res.end()
       })
     } catch (err) {
       console.error('errror', err)
-      res.write(JSON.stringify({ "res": "error" }))
       res.setHeader("Access-Control-Allow-Origin", req.headers.origin)
-      res.end()
+      res.write(JSON.stringify({ "res": "error" }))
+      return res.end()
     }
   } else {
-    res.write(JSON.stringify({ "res": "not_found" }))
     res.setHeader("Access-Control-Allow-Origin", req.headers.origin)
+    res.write(JSON.stringify({ "res": "not_found" }))
     res.end()
   }
 }).listen(process.env.PORT || 7071)
