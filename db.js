@@ -22,6 +22,10 @@ export const File = db.define("files", {
     torrentFile: {
         type: DataTypes.JSONB
     },
+    size: {
+        type: DataTypes.NUMBER,
+        allowNull:true
+    },
     createdAt: {
         allowNull: false,
         type: DataTypes.DATE
