@@ -1,13 +1,9 @@
 import WebTorrent from 'webtorrent'
-import Redis from 'ioredis'
-import { config } from './config.js'
 import {File} from './db.js'
-const { redis: _redis } = config
 import { Op } from 'sequelize'
 
 const runSeed = async () => {
   const client = new WebTorrent()
-  const redis = new Redis(_redis)
   const magnet = process.argv.join('').split('magnet=')[1]
   const magnetUri = decodeURIComponent(magnet)
   let torrentFile = undefined
