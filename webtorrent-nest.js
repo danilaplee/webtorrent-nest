@@ -40,7 +40,7 @@ const addFile = async (magnetUri, torrentFile) => {
 
 }
 
-const streamFile = async (magnetUri, torrentFile) => {
+const streamFile = async (magnetUri) => {
 
 
   if (children[magnetUri]) {
@@ -115,10 +115,10 @@ const runQueue = async () => {
 
     const newFiles = await File.findAll({ where: { status: { [Op.eq]: "leech" } } })
     await Promise.all(newFiles.map(async (nfile) =>
-      streamFile(nfile.magnet, nfile.torrentFile)
+      streamFile(nfile.magnet)
     ))
   } catch (err) {
-    console.error('err running queue',)
+    console.error('err running queue',err)
   }
 }
 
