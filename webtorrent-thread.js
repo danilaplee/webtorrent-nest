@@ -1,5 +1,5 @@
 import WebTorrent from 'webtorrent'
-import {File} from './db.js'
+import {File as Files} from './db.js'
 import { Op } from 'sequelize'
 
 const runSeed = async () => {
@@ -12,7 +12,7 @@ const runSeed = async () => {
   let torrentFile = undefined
   let cache;
   try {
-    cache = await File.findOne({where:{magnet:{[Op.eq]:magnet}}})
+    cache = await Files.findOne({where:{magnet:{[Op.eq]:magnet}}})
     console.info('find cache for magnet', cache)
     torrentFile = new File(
       [
