@@ -34,8 +34,11 @@ const addFile = async (magnetUri, torrentFile) => {
     return;
   }
   if (torrentFile) {
-    // console.info(tPromise)
-    const file = await File.create({ magnet: magnetUri, torrentFile: (await torrentFile).toJSON(), status: "leech" })
+    const file = await File.create({ 
+      magnet: magnetUri, 
+      torrentFile: (await torrentFile).toJSON(), 
+      status: "leech" 
+    })
     return file;
   }
 
