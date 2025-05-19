@@ -10,7 +10,8 @@ export const File = db.define("files", {
         defaultValue: Sequelize.literal('uuid_generate_v4()')
     },
     magnet: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        unique: true
     },
     user_id: {
         type: DataTypes.STRING,
