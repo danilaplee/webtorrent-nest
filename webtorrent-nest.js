@@ -8,7 +8,7 @@ const queueRunInterval = !isNaN(envInterval) ? envInterval : 10000
 const __dirname = path.resolve();
 const children = {}
 const threadPath = path.join(__dirname, "webtorrent-thread.js")
-
+const baseUrl = process.env.BASE_URL || "http://localhost:8080"
 function getBody(request) {
   return new Promise((resolve, reject) => {
     const bodyParts = [];
@@ -82,27 +82,28 @@ const streamFile = async (id) => {
 createServer((req, res) => {
   if (req.url.search("/stream") > -1) {
     try {
-      const urlParams = new URL("http://localhost:8080" + req.url).searchParams
+      const urlParams = new URL(baseUrl + req.url).searchParams
       const magnetUri = urlParams.get("magnet")
       const torrentFile = getBody(req)
+      const setCors = () => res.setHeader("Access-Control-Allow-Origin", req.headers.origin || baseUrl)
       addFile(magnetUri, torrentFile).then(() => {
-        res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "http://localhost:8080")
+        setCors()
         res.write(JSON.stringify({ "res": "done" }))
         return res.end()
       }).catch((err) => {
         console.error('stream file error', err?.message || err)
-        res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "http://localhost:8080")
+        setCors()
         res.write(JSON.stringify({ "res": "error" }))
         res.end()
       })
     } catch (err) {
       console.error('errror', err)
-      res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "http://localhost:8080")
+      setCors()
       res.write(JSON.stringify({ "res": "error" }))
       return res.end()
     }
   } else {
-    res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "http://localhost:8080")
+    setCors()
     res.write(JSON.stringify({ "res": "not_found" }))
     res.end()
   }
