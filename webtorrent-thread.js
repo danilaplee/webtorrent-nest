@@ -12,7 +12,7 @@ const runSeed = async () => {
   let cache;
   try {
     cache = await Files.findByPk(id)
-    torrentFile = Uint8Array.from(cache.torrentFile)
+    torrentFile = Buffer.from(cache.torrentFile)
   } catch (err) {
     console.error('torrentFile parsing error', err)
     // throw err;
