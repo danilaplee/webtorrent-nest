@@ -18,7 +18,7 @@ const runSeed = async () => {
     console.error('torrentFile parsing error', err)
     // throw err;
   }
-  console.info('starting process with magnet uri', magnetUri)
+  console.info('starting process with magnet uri', cache.magnet)
   cache.status = "seeding"
   await cache.save()
   await cache.reload()
