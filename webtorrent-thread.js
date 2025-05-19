@@ -1,6 +1,5 @@
 import WebTorrent from 'webtorrent'
 import {File as Files} from './db.js'
-import { Op } from 'sequelize'
 
 const runSeed = async () => {
   const client = new WebTorrent()
@@ -13,7 +12,7 @@ const runSeed = async () => {
   let cache;
   try {
     cache = await Files.findByPk(id)
-    torrentFile = Uint8Array.from(Object.values(JSON.parse(cache.torrentFile)))
+    torrentFile = Uint8Array.from(cache.torrentFile.data)
   } catch (err) {
     console.error('torrentFile parsing error', err)
     // throw err;
