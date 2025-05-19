@@ -82,27 +82,27 @@ const streamFile = async (id) => {
 createServer((req, res) => {
   if (req.url.search("/stream") > -1) {
     try {
-      const urlParams = new URL("https://localhost:8080" + req.url).searchParams
+      const urlParams = new URL("http://localhost:8080" + req.url).searchParams
       const magnetUri = urlParams.get("magnet")
       const torrentFile = getBody(req)
       addFile(magnetUri, torrentFile).then(() => {
-        res.setHeader("Access-Control-Allow-Origin", req.headers.origin)
+        res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "http://localhost:8080")
         res.write(JSON.stringify({ "res": "done" }))
         return res.end()
       }).catch((err) => {
         console.error('stream file error', err?.message || err)
-        res.setHeader("Access-Control-Allow-Origin", req.headers.origin)
+        res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "http://localhost:8080")
         res.write(JSON.stringify({ "res": "error" }))
         res.end()
       })
     } catch (err) {
       console.error('errror', err)
-      res.setHeader("Access-Control-Allow-Origin", req.headers.origin)
+      res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "http://localhost:8080")
       res.write(JSON.stringify({ "res": "error" }))
       return res.end()
     }
   } else {
-    res.setHeader("Access-Control-Allow-Origin", req.headers.origin)
+    res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "http://localhost:8080")
     res.write(JSON.stringify({ "res": "not_found" }))
     res.end()
   }
