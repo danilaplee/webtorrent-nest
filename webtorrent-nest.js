@@ -40,14 +40,14 @@ const addFile = async (magnetUri, torrentFile) => {
 
 }
 
-const streamFile = async (magnetUri) => {
+const streamFile = async (id) => {
 
 
-  if (children[magnetUri]) {
+  if (children[id]) {
     if (process.env.ENABLE_LOGS === "true") {
-      console.info(`child is already running for ${magnetUri}`)
+      console.info(`child is already running for ${id}`)
     }
-    children[magnetUri].kill()
+    children[id].kill()
   }
 
 
@@ -55,14 +55,14 @@ const streamFile = async (magnetUri) => {
 
   const child = spawn(
     "node",
-    [threadPath, "--magnet=", magnetUri]
+    [threadPath, "--id=", id]
   )
   child.stderr.on('data', (data) => {
     console.error('error', data.toString())
   })
   child.once("spawn", () => {
     child.addListener("exit", () => {
-      delete children[magnetUri]
+      delete children[id]
       // streamFile(magnetUri)
     })
     if (process.env.ENABLE_LOGS === "true") {
@@ -71,7 +71,7 @@ const streamFile = async (magnetUri) => {
       });
     }
   })
-  children[magnetUri] = child
+  children[id] = child
 }
 
 
@@ -115,7 +115,7 @@ const runQueue = async () => {
 
     const newFiles = await File.findAll({ where: { status: { [Op.eq]: "leech" } } })
     await Promise.all(newFiles.map(async (nfile) =>
-      streamFile(nfile.magnet)
+      streamFile(nfile.id)
     ))
   } catch (err) {
     console.error('err running queue',err)

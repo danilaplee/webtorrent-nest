@@ -8,13 +8,11 @@ const runSeed = async () => {
     console.error('client error', err)
     process.exit(1)
   })
-  const magnet = process.argv.join('').split('magnet=')[1]
-  const magnetUri = decodeURIComponent(magnet)
+  const id = process.argv.join('').split('id=')[1]
   let torrentFile = undefined
   let cache;
   try {
-    cache = await Files.findOne({where:{magnet:{[Op.eq]:magnet}}})
-    console.info('find cache for magnet', cache, cache.torrentFile.data)
+    cache = await Files.findOne({where:{id:{[Op.eq]:id}}})
     torrentFile = Uint8Array.from(Object.values(JSON.parse(cache.torrentFile)))
   } catch (err) {
     console.error('torrentFile parsing error', err)
@@ -25,7 +23,7 @@ const runSeed = async () => {
   await cache.save()
   await cache.reload()
   client.add(
-    torrentFile || magnetUri,
+    torrentFile,
     { path: "/webtorrent/", skipVerify: false },
     (torrent) => {
       console.info('torrent created')
